@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -80,10 +81,11 @@ public class MainActivity extends Activity {
 
     }
 
-    public static void editContact(View view, int position, String name, String number){
+    public static void editContact(View view, int position, String name, String number, Bitmap foto){
         Contact x = contactsList.get(position);
         x.setName(name);
         x.setNumber(number);
+        x.setFoto(foto);
 
 
     }

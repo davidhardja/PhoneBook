@@ -1,11 +1,13 @@
 package com.example.android.phonebook;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class DetailsActivity extends AppCompatActivity {
@@ -18,6 +20,14 @@ public class DetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_details);
         String name = intent.getExtras().getString("name");
         String number = intent.getExtras().getString("number");
+        int position = intent.getExtras().getInt("position");
+        Bitmap x = MainActivity.contactsList.get(position).getFoto();
+        if(x!=null){
+            ImageView photoImageView = (ImageView)findViewById(R.id.details_image_view);
+            photoImageView.setImageBitmap(x);
+
+        }
+
         TextView nameTextView = (TextView)findViewById(R.id.details_name_text_view);
         nameTextView.setText(name);
         TextView numberTextView = (TextView)findViewById(R.id.details_number_text_view);

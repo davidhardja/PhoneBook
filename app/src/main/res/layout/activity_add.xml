@@ -13,6 +13,7 @@
         <ImageView
             android:id="@+id/add_image_view"
             android:src="@drawable/dummy_user"
+            android:scaleType="centerCrop"
             android:layout_width="128dp"
             android:layout_height="match_parent" />
         <EditText

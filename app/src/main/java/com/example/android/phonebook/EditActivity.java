@@ -1,6 +1,9 @@
 package com.example.android.phonebook;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,10 +11,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.File;
 
 public class EditActivity extends AppCompatActivity {
     static int REQUEST_IMAGE_CAPTURE;
+
     Intent intent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +45,9 @@ public class EditActivity extends AppCompatActivity {
         REQUEST_IMAGE_CAPTURE = position;
         EditText name = (EditText)findViewById(R.id.name_edit_view);
         EditText number = (EditText)findViewById(R.id.number_edit_view);
-        MainActivity.editContact(view, position, name.getText().toString(), number.getText().toString());
+        ImageView imageView = (ImageView) findViewById(R.id.edit_image_view);
+        Bitmap bm=((BitmapDrawable)imageView.getDrawable()).getBitmap();
+        MainActivity.editContact(view, position, name.getText().toString(), number.getText().toString(),bm);
         Intent ix = new Intent(this,MainActivity.class);
         startActivity(ix);
         finish();
@@ -48,6 +58,36 @@ public class EditActivity extends AppCompatActivity {
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
+
+    }
+
+    Bitmap photo;
+    File photofile;
+
+    protected void onActivityResult(int requestCode,int resultCode, Intent data){
+        super.onActivityResult(requestCode,resultCode,data);
+
+        if(requestCode==REQUEST_IMAGE_CAPTURE){
+            try{
+                photo = (Bitmap) data.getExtras().get("data");
+
+            }catch(NullPointerException ex){
+                photo = BitmapFactory.decodeFile(photofile.getAbsolutePath());
+            }
+            Save s = new Save();
+            if(photo!=null){
+
+                ImageView iv = (ImageView)findViewById(R.id.edit_image_view);
+
+                iv.setImageBitmap(photo);
+                s.SaveImage(this, photo);
+            }else{
+
+                Toast.makeText(this, "oops cant save photo", Toast.LENGTH_LONG).show();
+
+            }
+        }
+
 
     }
 
