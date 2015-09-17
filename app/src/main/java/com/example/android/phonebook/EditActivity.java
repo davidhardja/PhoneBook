@@ -30,6 +30,13 @@ public class EditActivity extends AppCompatActivity {
         EditText tnumber = (EditText)findViewById(R.id.number_edit_view);
         tname.setText(intent.getExtras().getString("name"));
         tnumber.setText(intent.getExtras().getString("number"));
+        int position = intent.getExtras().getInt("posisi");
+        Bitmap x = MainActivity.contactsList.get(position).getFoto();
+        if(x!=null){
+            ImageView photoImageView = (ImageView)findViewById(R.id.edit_image_view);
+            photoImageView.setImageBitmap(x);
+
+        }
 
     }
 

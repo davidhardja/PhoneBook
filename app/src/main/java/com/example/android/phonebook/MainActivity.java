@@ -61,15 +61,15 @@ public class MainActivity extends Activity {
 
     public void displayListView(){
         if(contactsList.isEmpty()){
-            Contact Acong = new Contact("Acong","08112345678");
+            Contact Acong = new Contact("Acong","08112345678",null);
             contactsList.add(Acong);
-            Contact Burton = new Contact("Burton","08212345679");
+            Contact Burton = new Contact("Burton","08212345679",null);
             contactsList.add(Burton);
-            Contact Cangcimen = new Contact("Cangcimen","08312345680");
+            Contact Cangcimen = new Contact("Cangcimen","08312345680",null);
             contactsList.add(Cangcimen);
-            Contact Dodo = new Contact("Dodo","08412345681");
+            Contact Dodo = new Contact("Dodo","08412345681",null);
             contactsList.add(Dodo);
-            Contact Encok = new Contact("Encok","08512345682");
+            Contact Encok = new Contact("Encok","08512345682",null);
             contactsList.add(Encok);
         }
 
@@ -95,7 +95,7 @@ public class MainActivity extends Activity {
             // Do something in response to the click
 
             goDetails(v, position);
-            finish();
+
 
         }
     };
@@ -108,9 +108,9 @@ public class MainActivity extends Activity {
 
     }
 
-    public static void addContact(View view, String name, String number){
+    public static void addContact(View view, String name, String number, Bitmap b){
 
-        Contact Contact = new Contact(name,number);
+        Contact Contact = new Contact(name,number,b);
         contactsList.add(Contact);
 
     }

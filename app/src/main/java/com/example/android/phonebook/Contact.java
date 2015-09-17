@@ -10,10 +10,11 @@ public class Contact {
     String number="";
     Bitmap foto;
 
-    public Contact(String name, String number){
+    public Contact(String name, String number, Bitmap b){
         super();
         this.name = name;
         this.number = number;
+        this.foto = b;
 
     }
 
