@@ -1,6 +1,7 @@
 package com.example.android.phonebook;
 
 import android.content.Intent;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,7 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class EditActivity extends AppCompatActivity {
-
+    static int REQUEST_IMAGE_CAPTURE;
     Intent intent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +34,21 @@ public class EditActivity extends AppCompatActivity {
 
     public void submitEdit(View view){
         int position = intent.getExtras().getInt("posisi");
+        REQUEST_IMAGE_CAPTURE = position;
         EditText name = (EditText)findViewById(R.id.name_edit_view);
         EditText number = (EditText)findViewById(R.id.number_edit_view);
         MainActivity.editContact(view, position, name.getText().toString(), number.getText().toString());
         Intent ix = new Intent(this,MainActivity.class);
         startActivity(ix);
         finish();
+    }
+
+    public void editImage(View view){
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+
     }
 
 
