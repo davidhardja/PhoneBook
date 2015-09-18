@@ -1,11 +1,12 @@
 package com.example.android.phonebook;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,7 +18,7 @@ import android.widget.Toast;
 
 import java.io.File;
 
-public class EditActivity extends AppCompatActivity {
+public class EditActivity extends Activity {
     static int REQUEST_IMAGE_CAPTURE;
 
     Intent intent;
@@ -54,6 +55,7 @@ public class EditActivity extends AppCompatActivity {
         EditText number = (EditText)findViewById(R.id.number_edit_view);
         ImageView imageView = (ImageView) findViewById(R.id.edit_image_view);
         Bitmap bm=((BitmapDrawable)imageView.getDrawable()).getBitmap();
+
         MainActivity.editContact(view, position, name.getText().toString(), number.getText().toString(),bm);
         Intent ix = new Intent(this,MainActivity.class);
         startActivity(ix);

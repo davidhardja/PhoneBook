@@ -1,11 +1,12 @@
 package com.example.android.phonebook;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,7 +17,7 @@ import android.widget.Toast;
 
 import java.io.File;
 
-public class AddActivity extends AppCompatActivity {
+public class AddActivity extends Activity {
     public static int REQUEST_IMAGE_CAPTURE;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +41,6 @@ public class AddActivity extends AppCompatActivity {
         EditText name = (EditText)findViewById(R.id.add_name_edit_view);
         EditText number = (EditText)findViewById(R.id.add_number_edit_view);
         Intent intent = new Intent(this,MainActivity.class);
-
-
 
         REQUEST_IMAGE_CAPTURE = 0;
         ImageView imageView = (ImageView) findViewById(R.id.add_image_view);

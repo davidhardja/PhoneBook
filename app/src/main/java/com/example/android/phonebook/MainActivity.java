@@ -4,6 +4,8 @@ import android.app.Activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,10 +18,16 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
 public class MainActivity extends Activity {
     MyCustomAdapter dataAdapter=null;
+    static SQLiteDatabase sqLiteDatabase = null;
+    Cursor cursor = null;
+    static DatabaseContact databaseContact = null;
 
 
     static ArrayList<Contact> contactsList = new ArrayList<Contact>();
@@ -27,8 +35,13 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        databaseContact = new DatabaseContact(this);
+
+        sqLiteDatabase = databaseContact.getWritableDatabase();
+        databaseContact.createTable(sqLiteDatabase);
         setContentView(R.layout.activity_main);
         displayListView();
+
     }
 
     @Override
@@ -60,18 +73,20 @@ public class MainActivity extends Activity {
     }
 
     public void displayListView(){
+
+//        Contact Acong = new Contact("Acong","08112345678",null);
+//        contactsList.add(Acong);
+        cursor = sqLiteDatabase.rawQuery("SELECT * FROM contactList", null);
         if(contactsList.isEmpty()){
-            Contact Acong = new Contact("Acong","08112345678",null);
-            contactsList.add(Acong);
-            Contact Burton = new Contact("Burton","08212345679",null);
-            contactsList.add(Burton);
-            Contact Cangcimen = new Contact("Cangcimen","08312345680",null);
-            contactsList.add(Cangcimen);
-            Contact Dodo = new Contact("Dodo","08412345681",null);
-            contactsList.add(Dodo);
-            Contact Encok = new Contact("Encok","08512345682",null);
-            contactsList.add(Encok);
+            for(cursor.moveToFirst();!cursor.isAfterLast();cursor.moveToNext()){
+                String name = cursor.getString(1);
+                String number = cursor.getString(2);
+                Bitmap photo = DbBitmapUtility.getImage(cursor.getBlob(1));
+                Contact c = new Contact(name,number,photo);
+                contactsList.add(c);
+            }
         }
+
 
         dataAdapter = new MyCustomAdapter(this,R.layout.list_view_layout,contactsList);
         ListView lv = (ListView)findViewById(R.id.contact_list_view);
@@ -87,6 +102,8 @@ public class MainActivity extends Activity {
         x.setNumber(number);
         x.setFoto(foto);
 
+        byte[] image = DbBitmapUtility.getBytes(foto);
+        databaseContact.editData(sqLiteDatabase, position, name, number, image);
 
     }
 
@@ -108,22 +125,33 @@ public class MainActivity extends Activity {
 
     }
 
+    public static void removeContact(View v, String name, int posisi){
+
+        databaseContact.removeData(sqLiteDatabase,name);
+        contactsList.remove(posisi);
+    }
+
     public static void addContact(View view, String name, String number, Bitmap b){
 
         Contact Contact = new Contact(name,number,b);
         contactsList.add(Contact);
 
+        byte[] image = DbBitmapUtility.getBytes(b);
+        databaseContact.addData(sqLiteDatabase,name,number,image);
+
     }
 
     private void goDetails(View view, int position){
+
         Intent intent = new Intent(this,DetailsActivity.class);
         Contact c = dataAdapter.contactList.get(position);
         String name = c.getName();
         String number = c.getNumber();
         intent.putExtra("name",name);
         intent.putExtra("number",number);
-        intent.putExtra("position",position);
+        intent.putExtra("position", position);
         startActivity(intent);
+        finish();
     }
 
 

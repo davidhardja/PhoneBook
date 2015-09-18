@@ -2,6 +2,8 @@ package com.example.android.phonebook;
 
 import android.graphics.Bitmap;
 
+import java.io.Serializable;
+
 /**
  * Created by bocist-8 on 15/09/15.
  */

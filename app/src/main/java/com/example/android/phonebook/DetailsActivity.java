@@ -1,8 +1,9 @@
 package com.example.android.phonebook;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.support.v7.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,8 +11,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class DetailsActivity extends AppCompatActivity {
+public class DetailsActivity extends Activity {
     Intent intent;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +23,7 @@ public class DetailsActivity extends AppCompatActivity {
         String name = intent.getExtras().getString("name");
         String number = intent.getExtras().getString("number");
         int position = intent.getExtras().getInt("position");
+        System.out.println(position);
         Bitmap x = MainActivity.contactsList.get(position).getFoto();
         if(x!=null){
             ImageView photoImageView = (ImageView)findViewById(R.id.details_image_view);
@@ -35,16 +38,11 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     public void deleteContact(View view){
-//        int position = intent.getExtras().getInt("position");
-//        TextView posisisi = (TextView)findViewById(R.id.posisi2);
-//        posisisi.setText(position+"");
-
-        int position = intent.getExtras().getInt("position");
-
-        MainActivity.contactsList.remove(position);
+        System.out.println("OIIII"+intent.getExtras().getInt("position"));
+        String name = intent.getExtras().getString("name");
+        MainActivity.removeContact(view, name, intent.getExtras().getInt("position"));
         Intent ix = new Intent(this,MainActivity.class);
         startActivity(ix);
-        finish();
     }
 
     public void goEditActivity(View view){
