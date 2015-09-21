@@ -12,7 +12,7 @@
         android:layout_height="128dp">
         <com.example.android.phonebook.RoundedImageView
             android:scaleType="centerCrop"
-            android:onClick="editImage"
+            android:onClick="captureImageInitialization"
             android:id="@+id/edit_image_view"
             android:src="@drawable/dummy_user"
             android:layout_width="128dp"
