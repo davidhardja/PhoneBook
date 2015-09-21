@@ -10,13 +10,13 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="128dp">
-        <ImageView
+        <com.example.android.phonebook.RoundedImageView
             android:scaleType="centerCrop"
             android:onClick="editImage"
             android:id="@+id/edit_image_view"
             android:src="@drawable/dummy_user"
             android:layout_width="128dp"
-            android:layout_height="match_parent" />
+            android:layout_height="128dp" />
         <EditText
             android:id="@+id/name_edit_view"
             android:padding="8dp"

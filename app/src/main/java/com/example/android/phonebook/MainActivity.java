@@ -81,7 +81,7 @@ public class MainActivity extends Activity {
             for(cursor.moveToFirst();!cursor.isAfterLast();cursor.moveToNext()){
                 String name = cursor.getString(1);
                 String number = cursor.getString(2);
-                Bitmap photo = DbBitmapUtility.getImage(cursor.getBlob(1));
+                Bitmap photo = DbBitmapUtility.getImage(cursor.getBlob(3));
                 Contact c = new Contact(name,number,photo);
                 contactsList.add(c);
             }
@@ -98,12 +98,13 @@ public class MainActivity extends Activity {
 
     public static void editContact(View view, int position, String name, String number, Bitmap foto){
         Contact x = contactsList.get(position);
+        String oldName = x.getName();
         x.setName(name);
         x.setNumber(number);
         x.setFoto(foto);
 
         byte[] image = DbBitmapUtility.getBytes(foto);
-        databaseContact.editData(sqLiteDatabase, position, name, number, image);
+        databaseContact.editData(sqLiteDatabase, oldName, name, number, image);
 
     }
 

@@ -77,6 +77,7 @@ public class AddActivity extends Activity {
                 ImageView iv = (ImageView)findViewById(R.id.add_image_view);
 
                 iv.setImageBitmap(photo);
+
                 s.SaveImage(this, photo);
             }else{
 

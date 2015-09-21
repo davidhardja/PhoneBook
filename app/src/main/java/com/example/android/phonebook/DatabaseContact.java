@@ -75,15 +75,14 @@ public class DatabaseContact extends SQLiteOpenHelper {
 
 
 
-    public static void editData(SQLiteDatabase sqLiteDatabase, int position, String name, String number, byte[] photo) throws SQLiteException{
+    public static void editData(SQLiteDatabase sqLiteDatabase, String oldName, String name, String number, byte[] photo) throws SQLiteException{
         ContentValues cv = new ContentValues();
         cv.put(CONTACT_NAME,name);
         cv.put(CONTACT_NUMBER,number);
         cv.put(CONTACT_PHOTO, photo);
-        String sql = "UPDATE contactList SET name='"+name+"', number='"+number+"', photo='"+photo+"' WHERE id = "+position+";";
-        //sqLiteDatabase.update("contactList", cv, "id " + "="+position, null);
-        System.out.println(sql);
-        sqLiteDatabase.execSQL(sql);
+        //String sql = "UPDATE contactList SET name='"+name+"', number='"+number+"', photo='"+photo+"' WHERE id = "+position+";";
+        sqLiteDatabase.update("contactList", cv, "name " + "="+oldName, null);
+        //sqLiteDatabase.execSQL(sql);
     }
 
     @Override

@@ -33,7 +33,11 @@ public class EditActivity extends Activity {
         tnumber.setText(intent.getExtras().getString("number"));
         int position = intent.getExtras().getInt("posisi");
         Bitmap x = MainActivity.contactsList.get(position).getFoto();
+
+
         if(x!=null){
+
+
             ImageView photoImageView = (ImageView)findViewById(R.id.edit_image_view);
             photoImageView.setImageBitmap(x);
 
