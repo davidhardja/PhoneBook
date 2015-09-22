@@ -1,23 +1,18 @@
 package com.example.android.phonebook;
 
 import android.app.Activity;
-
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -25,19 +20,25 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
+
 import java.util.ArrayList;
 
 public class MainActivity extends Activity {
     private TextView info;
     private CallbackManager callbackManager;
     private LoginButton loginButton;
+    public  ShareLinkContent content;
+    public ShareDialog shareDialog;
+
+
     MyCustomAdapter dataAdapter=null;
+
     static SQLiteDatabase sqLiteDatabase = null;
     Cursor cursor = null;
     static DatabaseContact databaseContact = null;
@@ -49,13 +50,20 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
+       content = new ShareLinkContent.Builder()
+                .setContentUrl(Uri.parse("https://developers.facebook.com"))
+                .build();
+
         databaseContact = new DatabaseContact(this);
 
         sqLiteDatabase = databaseContact.getWritableDatabase();
         databaseContact.createTable(sqLiteDatabase);
 
         FacebookSdk.sdkInitialize(getApplicationContext());
+
         callbackManager = CallbackManager.Factory.create();
+        shareDialog = new ShareDialog(this);
         setContentView(R.layout.activity_main);
         info = (TextView) findViewById(R.id.info);
         loginButton = (LoginButton) findViewById(R.id.login_button);
@@ -63,6 +71,8 @@ public class MainActivity extends Activity {
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
+
+
                 info.setText(
                         "User ID: "
                                 + loginResult.getAccessToken().getUserId()
@@ -82,10 +92,29 @@ public class MainActivity extends Activity {
                 info.setText("Login attempt failed.");
             }
         });
+
+
     }
+
+    public void updateStatus(View view){
+        if (ShareDialog.canShow(ShareLinkContent.class)) {
+            ShareLinkContent linkContent = new ShareLinkContent.Builder()
+                    .setContentTitle("Hello Facebook")
+                    .setContentDescription(
+                            "The 'Hello Facebook' sample  showcases simple Facebook integration")
+                    .setContentUrl(Uri.parse("http://developers.facebook.com/android"))
+                    .build();
+
+            shareDialog.show(linkContent);
+        }
+
+    }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -189,10 +218,8 @@ public class MainActivity extends Activity {
     public void add(View view){
         Intent intent = new Intent(this,AddActivity.class);
         startActivity(intent);
-
-
-
     }
+
 
     public static void removeContact(View v, String name, int posisi){
 
