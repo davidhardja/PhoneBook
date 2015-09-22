@@ -13,10 +13,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -24,6 +34,9 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
 public class MainActivity extends Activity {
+    private TextView info;
+    private CallbackManager callbackManager;
+    private LoginButton loginButton;
     MyCustomAdapter dataAdapter=null;
     static SQLiteDatabase sqLiteDatabase = null;
     Cursor cursor = null;
@@ -34,14 +47,58 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         databaseContact = new DatabaseContact(this);
 
         sqLiteDatabase = databaseContact.getWritableDatabase();
         databaseContact.createTable(sqLiteDatabase);
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        callbackManager = CallbackManager.Factory.create();
+        setContentView(R.layout.activity_main);
+        info = (TextView) findViewById(R.id.info);
+        loginButton = (LoginButton) findViewById(R.id.login_button);
+        displayListView();
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                info.setText(
+                        "User ID: "
+                                + loginResult.getAccessToken().getUserId()
+                                + "\n" +
+                                "Auth Token: "
+                                + loginResult.getAccessToken().getToken()
+                );
+            }
+
+            @Override
+            public void onCancel() {
+                info.setText("Login attempt canceled.");
+            }
+
+            @Override
+            public void onError(FacebookException e) {
+                info.setText("Login attempt failed.");
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         setContentView(R.layout.activity_main);
         displayListView();
+    }
 
+    @Override
+    public void recreate() {
+        super.recreate();
     }
 
     @Override
@@ -55,6 +112,18 @@ public class MainActivity extends Activity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    public void big(View view){
+        ListView image = (ListView)findViewById(R.id.contact_list_view);
+        Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.biganimation);
+        image.startAnimation(animation);
+    }
+
+    public void small(View view){
+        ListView image = (ListView)findViewById(R.id.contact_list_view);
+        Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.smallanimation);
+        image.startAnimation(animation);
     }
 
     @Override
@@ -108,20 +177,19 @@ public class MainActivity extends Activity {
 
     }
 
+
+
     private AdapterView.OnItemClickListener mMessageClickedHandler = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView parent, View v, int position, long id) {
             // Do something in response to the click
-
             goDetails(v, position);
-
-
         }
     };
 
     public void add(View view){
         Intent intent = new Intent(this,AddActivity.class);
         startActivity(intent);
-        finish();
+
 
 
     }
@@ -152,7 +220,7 @@ public class MainActivity extends Activity {
         intent.putExtra("number",number);
         intent.putExtra("position", position);
         startActivity(intent);
-        finish();
+
     }
 
 

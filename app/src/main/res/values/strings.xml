@@ -6,4 +6,5 @@
     <string name="title_activity_details">DetailsActivity</string>
     <string name="title_activity_edit">EditActivity</string>
     <string name="title_activity_add">AddActivity</string>
+    <string name="facebook_app_id">728105320666694</string>
 </resources>
