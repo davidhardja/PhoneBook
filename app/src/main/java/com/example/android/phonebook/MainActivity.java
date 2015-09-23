@@ -1,6 +1,7 @@
 package com.example.android.phonebook;
 
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -16,18 +17,30 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
 import com.facebook.login.LoginResult;
+
+import com.facebook.login.*;
 import com.facebook.login.widget.LoginButton;
 import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.model.ShareOpenGraphObject;
+import com.facebook.GraphRequest.*;
 import com.facebook.share.widget.ShareDialog;
 
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MainActivity extends Activity {
     private TextView info;
@@ -35,6 +48,7 @@ public class MainActivity extends Activity {
     private LoginButton loginButton;
     public  ShareLinkContent content;
     public ShareDialog shareDialog;
+    public LoginManager lg;
 
 
     MyCustomAdapter dataAdapter=null;
@@ -45,6 +59,10 @@ public class MainActivity extends Activity {
 
 
     static ArrayList<Contact> contactsList = new ArrayList<Contact>();
+
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,11 +85,15 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         info = (TextView) findViewById(R.id.info);
         loginButton = (LoginButton) findViewById(R.id.login_button);
+
+
+        //lg.getInstance().logInWithReadPermissions(this, Arrays.asList("user_friends", "user_birthday"));
+
         displayListView();
+        lg.getInstance().logInWithReadPermissions(this, Arrays.asList("user_friends", "user_birthday"));
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-
 
                 info.setText(
                         "User ID: "
@@ -79,13 +101,41 @@ public class MainActivity extends Activity {
                                 + "\n" +
                                 "Auth Token: "
                                 + loginResult.getAccessToken().getToken()
+
+
                 );
+
+
+
+                new GraphRequest(
+                        AccessToken.getCurrentAccessToken(),
+                        "/me",
+                        null,
+                        HttpMethod.GET,
+                        new Callback() {
+                            public void onCompleted(GraphResponse response) {
+            /* handle the result */
+
+                                JSONObject jsonObject = response.getJSONObject();
+                                try{
+                                    System.out.println("SSSS"+jsonObject.getString("name"));
+                                    System.out.println("SSSS"+AccessToken.getCurrentAccessToken().getToken()+"");
+                                    System.out.println("SSSS"+AccessToken.getCurrentAccessToken().getPermissions()+"");
+                                }catch (JSONException e){
+
+                                }
+
+                            }
+                        }
+                ).executeAsync();
             }
 
             @Override
             public void onCancel() {
                 info.setText("Login attempt canceled.");
             }
+
+
 
             @Override
             public void onError(FacebookException e) {
@@ -96,7 +146,11 @@ public class MainActivity extends Activity {
 
     }
 
+
+
+
     public void updateStatus(View view){
+
         if (ShareDialog.canShow(ShareLinkContent.class)) {
             ShareLinkContent linkContent = new ShareLinkContent.Builder()
                     .setContentTitle("Hello Facebook")
@@ -116,6 +170,7 @@ public class MainActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
+
     }
 
     @Override
@@ -169,6 +224,8 @@ public class MainActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 
     public void displayListView(){
 
