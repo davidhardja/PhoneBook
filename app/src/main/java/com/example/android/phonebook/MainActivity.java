@@ -43,26 +43,53 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MainActivity extends Activity {
-    private TextView info;
-    private CallbackManager callbackManager;
-    private LoginButton loginButton;
+    static SQLiteDatabase sqLiteDatabase = null;
+    static DatabaseContact databaseContact = null;
+    static ArrayList<Contact> contactsList = new ArrayList<Contact>();
     public  ShareLinkContent content;
     public ShareDialog shareDialog;
     public LoginManager lg;
 
 
     MyCustomAdapter dataAdapter=null;
-
-    static SQLiteDatabase sqLiteDatabase = null;
     Cursor cursor = null;
-    static DatabaseContact databaseContact = null;
+    private TextView info;
+    private CallbackManager callbackManager;
+    private LoginButton loginButton;
+    private AdapterView.OnItemClickListener mMessageClickedHandler = new AdapterView.OnItemClickListener() {
+        public void onItemClick(AdapterView parent, View v, int position, long id) {
+            // Do something in response to the click
+            goDetails(v, position);
+        }
+    };
 
+    public static void editContact(View view, int position, String name, String number, Bitmap foto){
+        Contact x = contactsList.get(position);
+        String oldName = x.getName();
+        x.setName(name);
+        x.setNumber(number);
+        x.setFoto(foto);
 
-    static ArrayList<Contact> contactsList = new ArrayList<Contact>();
+        byte[] image = DbBitmapUtility.getBytes(foto);
+        databaseContact.editData(sqLiteDatabase, oldName, name, number, image);
 
+    }
 
+    public static void removeContact(View v, String name, int posisi){
 
+        databaseContact.removeData(sqLiteDatabase, name);
+        contactsList.remove(posisi);
+    }
 
+    public static void addContact(View view, String name, String number, Bitmap b){
+
+        Contact Contact = new Contact(name,number,b);
+        contactsList.add(Contact);
+
+        byte[] image = DbBitmapUtility.getBytes(b);
+        databaseContact.addData(sqLiteDatabase, name, number, image);
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +117,10 @@ public class MainActivity extends Activity {
         //lg.getInstance().logInWithReadPermissions(this, Arrays.asList("user_friends", "user_birthday"));
 
         displayListView();
+
+    }
+
+    public void login(View view){
         lg.getInstance().logInWithReadPermissions(this, Arrays.asList("user_friends", "user_birthday"));
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -101,21 +132,12 @@ public class MainActivity extends Activity {
                                 + "\n" +
                                 "Auth Token: "
                                 + loginResult.getAccessToken().getToken()
-
-
                 );
 
-
-
                 new GraphRequest(
-                        AccessToken.getCurrentAccessToken(),
-                        "/me",
-                        null,
-                        HttpMethod.GET,
-                        new Callback() {
+                        AccessToken.getCurrentAccessToken(), "/me", null, HttpMethod.GET, new Callback() {
                             public void onCompleted(GraphResponse response) {
-            /* handle the result */
-
+                                /* handle the result */
                                 JSONObject jsonObject = response.getJSONObject();
                                 try{
                                     System.out.println("SSSS"+jsonObject.getString("name"));
@@ -143,11 +165,7 @@ public class MainActivity extends Activity {
             }
         });
 
-
     }
-
-
-
 
     public void updateStatus(View view){
 
@@ -163,8 +181,6 @@ public class MainActivity extends Activity {
         }
 
     }
-
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -225,8 +241,6 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-
-
     public void displayListView(){
 
 //        Contact Acong = new Contact("Acong","08112345678",null);
@@ -251,47 +265,9 @@ public class MainActivity extends Activity {
 
     }
 
-    public static void editContact(View view, int position, String name, String number, Bitmap foto){
-        Contact x = contactsList.get(position);
-        String oldName = x.getName();
-        x.setName(name);
-        x.setNumber(number);
-        x.setFoto(foto);
-
-        byte[] image = DbBitmapUtility.getBytes(foto);
-        databaseContact.editData(sqLiteDatabase, oldName, name, number, image);
-
-    }
-
-
-
-    private AdapterView.OnItemClickListener mMessageClickedHandler = new AdapterView.OnItemClickListener() {
-        public void onItemClick(AdapterView parent, View v, int position, long id) {
-            // Do something in response to the click
-            goDetails(v, position);
-        }
-    };
-
     public void add(View view){
         Intent intent = new Intent(this,AddActivity.class);
         startActivity(intent);
-    }
-
-
-    public static void removeContact(View v, String name, int posisi){
-
-        databaseContact.removeData(sqLiteDatabase,name);
-        contactsList.remove(posisi);
-    }
-
-    public static void addContact(View view, String name, String number, Bitmap b){
-
-        Contact Contact = new Contact(name,number,b);
-        contactsList.add(Contact);
-
-        byte[] image = DbBitmapUtility.getBytes(b);
-        databaseContact.addData(sqLiteDatabase,name,number,image);
-
     }
 
     private void goDetails(View view, int position){

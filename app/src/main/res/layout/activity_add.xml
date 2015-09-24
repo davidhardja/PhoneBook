@@ -41,15 +41,18 @@
         android:layout_height="wrap_content">
 
         <Button
+            android:background="@drawable/button_biru"
             android:onClick="submitAdd"
             android:id="@+id/edit_button_submit"
             android:layout_weight="1"
+            android:layout_marginRight="10dp"
             android:text="Submit"
             android:gravity="center"
             android:layout_width="0dp"
             android:layout_height="wrap_content" />
 
         <Button
+            android:background="@drawable/button_merah"
             android:onClick="cancel"
             android:id="@+id/edit_button_cancel"
             android:layout_weight="1"
